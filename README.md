@@ -41,8 +41,8 @@ python install setup.py install
 Fifth, download the genomic data and DanQ model data and put it into the pre_load folder.
 
 ```
-hg19:#把两个文件上传到我们的服务器，再把链接放上来
-DanQ model:
+hg19:[http://mcube.nju.edu.cn/jwang/member/wangzhi/hg19.7z](http://mcube.nju.edu.cn/jwang/member/wangzhi/hg19.7z)
+DanQ model: [http://mcube.nju.edu.cn/jwang/member/wangzhi/DanQ_bestmodel.hdf5](http://mcube.nju.edu.cn/jwang/member/wangzhi/DanQ_bestmodel.hdf5)
 ```
 ## USAGE
 The following 3 commands were provided by the DeepMiRTss package:  
