@@ -67,7 +67,7 @@ DeepMiRTss.tssfinder -p ./example/pol2.bed
 DeepMiRTss.tssfinder -p ./example/pol2.bed -k ./example/h3k4me3.bed
 
 # When you have both pol2 and histone signal file and express file, code like this help you find TSSs based on expression file.
-DeepMiRTss.tssfinder -p ./example/pol2.bed -k ./example/h3k4me3.bed -e ./example/express.bed
+DeepMiRTss.tssfinder -p ./example/pol2.bed -k ./example/h3k4me3.bed -e ./example/express.txt
 
 # You can identify only one TSS for a miRNA, or identify multiple alternative TSSs, as long as you change the -n parameter.
 DeepMiRTss.tssfinder -p ./example/pol2.bed -n 1
