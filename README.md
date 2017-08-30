@@ -17,12 +17,12 @@ Install instructions:[http://bedtools.readthedocs.io/en/latest/](http://bedtools
 First, create a python virtualenv
 
 ```
-sudo virtualenv DeepMiRTss_env
+virtualenv DeepMiRTss_env
 ```
 Second, active the virtualenv and cd into it.
 
 ```
-sudo source ./DeepMiRTss_env/bin/activate
+source ./DeepMiRTss_env/bin/activate
 cd ./DeepMiRTss_env
 ```
 Third, download the software package.  
@@ -36,7 +36,7 @@ Fouth, cd to the package directory,run requirements and setup.py script to insta
 ```
 cd ./DeepMiRTss
 pip install -r requirements.txt
-python install setup.py install
+python setup.py install
 ```
 Fifth, download the genomic data and DanQ model data and put it into the pre_load folder.
 
