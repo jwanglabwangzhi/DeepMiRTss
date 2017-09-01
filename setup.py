@@ -13,7 +13,7 @@ def main():
           author='Wang Zhi',
           author_email='szxszx@foxmail.com',
           url='https://github.com/jwanglabwangzhi/DeepMiRTss',
-          packages=find_packages(),
+          packages=['deepmirtss'],
           include_package_data=True,
           entry_points = {
             'console_scripts':[           

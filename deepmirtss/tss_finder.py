@@ -161,14 +161,18 @@ class Tss_Finder(object):
     def call_tss_with_one_signal(self):
         self.get_pol2_inter_region()
         dict_mi_score = dict()
-        for pol2_line in open('inter_pol2.txt'):
+        inter_pol2_file = open('inter_pol2.txt')
+        list_inter_pol2 = inter_pol2_file.readlines()
+        inter_pol2_file.close()
+        for pol2_line in list_inter_pol2:
             pol2_new_line, mirna_name = self.inter_pol2_region_new_line(pol2_line)
             dict_mi_score.setdefault(mirna_name,[]).append(pol2_new_line.strip('\n')+'\t#\t#\t#\t#\t1\t#\n')
         mirna_tss_three=open('mirna_tss_three.txt','w')                               
         for i in dict_mi_score.keys():
             if len(dict_mi_score[i]) < self.dic_dir['alter_tss']:
                 for mi in dict_mi_score[i]:
-                    mirna_tss_three.write(mi[0])
+                    mirna_tss_three.write(mi)
+
             else:
                 list_mi_tss=list()
                 for mi in dict_mi_score[i]:
