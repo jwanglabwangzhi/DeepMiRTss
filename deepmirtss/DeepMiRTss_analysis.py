@@ -133,7 +133,7 @@ def main():
     u = 0
     for opt_name, opt_value in opts:
         if opt_name in ('-h', '--help'): 
-            print help_info     #这个地方help信息写了一个简单过程，在github说明书上应该写详细，提供-u 可以是任意整数，但生物学意义上应该是给负数即上游，整数即下游，所以最好给负数。不给就是0。
+            print help_info 
             exit()
         if opt_name in ('-u','--upstream'): 
             u = opt_value
@@ -149,6 +149,7 @@ def main():
     set_mirna=set()
     mirna_alternative_tss_file = open('./miRNA_alternative_tss.bed')
     mirna_alternative_tss_list = mirna_alternative_tss_file.readlines()
+    mirna_alternative_tss_file.close()
     for mirna_line in mirna_alternative_tss_list:
         mirna_name = mirna_line.split('\t')[3]
         set_mirna.add(mirna_name)
@@ -157,7 +158,6 @@ def main():
         for mirna_tss_line in mirna_alternative_tss_list:
             if mirna_tss_line.split('\t')[3] == mirna:
                 dict_mirna.setdefault(mirna,[]).append(mirna_tss_line)
-    mirna_alternative_tss_file.close()
     sort_mirna = open('sort_mirna_withtss.txt','w')
     for mirna_key in dict_mirna.keys():
         if len(dict_mirna[mirna_key]) == 1:
@@ -192,10 +192,10 @@ def main():
         mirna_score = split_line[4]
         tss_site = int(split_line[1])
         if strand == '+':
-            promoter_site = tss_site + u
+            promoter_site = tss_site - u
             new_line = chr_name +'\t' + str(promoter_site-500) +'\t' + str(promoter_site+500) + '\t' + mirna_name + '\t' +mirna_score + '\t' + strand +'\n'
         else:
-            promoter_site = tss_site - u
+            promoter_site = tss_site + u
             new_line = chr_name +'\t' + str(promoter_site-500) +'\t' + str(promoter_site+500) + '\t' + mirna_name + '\t' +mirna_score + '\t' + strand +'\n'
         promoter_region.write(new_line)
         mirna_list.append(mirna_name)    
@@ -284,6 +284,7 @@ def main():
     rnn_fcell = LSTMcell(input=inputs_T, D_input=num_units, D_cell=num_units,param_rnn=param_rnn_f)       
     rnn_bcell = LSTMcell(input=inputs_T, D_input=num_units, D_cell=num_units,param_rnn=param_rnn_b) 
     rnn0 = RNN(cell=rnn_fcell, cell_b=rnn_bcell)
+    rnn0= tf.transpose(rnn0, perm=[1,0,2])
     rnn1 = tf.reshape(rnn0, [num_seq,75*num_units*2])
     w_dense=danq_model['/layer_6/param_0'][...]
     b_dense=danq_model['/layer_6/param_1'][...]
