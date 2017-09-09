@@ -18,7 +18,7 @@ for mirna_sort in mirna_sort_list:
     if mirna_sort[:-2] == name:
         mir_sort_list.append(mirna_sort)
         for mirna_sort_value_index in zip(y_df.ix[mirna_sort], y_df.ix[mirna_sort].index):
-            if mirna_sort_value_index[0] > 0.1:                     #################################这要改成0.5
+            if mirna_sort_value_index[0] > 0.5:                     
                 feature_set.add(mirna_sort_value_index[1])        
 feature_sort_list = sorted([x for x in feature_set])        
 
@@ -166,13 +166,13 @@ for mir_sort in mir_sort_list:
     for feature_sort in feature_sort_list:
         new_feature_sort = feature_sort + mir_sort[-2:]
         feature_color = ''
-        if 0.01 < y_df.ix[mir_sort, feature_sort] <= 0.05:     ####################################################数字改成0.5,0.7
+        if 0.5 < y_df.ix[mir_sort, feature_sort] <= 0.7:     
             feature_color ='#999'
             mir_feature_dict.setdefault(mir_sort,[]).append(new_feature_sort)
-        elif 0.05 < y_df.ix[mir_sort, feature_sort] <= 0.08:       #################################################数字改成0.7，0.9
+        elif 0.7 < y_df.ix[mir_sort, feature_sort] <= 0.9:      
             feature_color ='#099'
             mir_feature_dict.setdefault(mir_sort,[]).append(new_feature_sort)
-        elif 0.08 < y_df.ix[mir_sort, feature_sort]:              ###############################################数字改成0.9
+        elif 0.9 < y_df.ix[mir_sort, feature_sort]:           
             feature_color ='#009'
             mir_feature_dict.setdefault(mir_sort,[]).append(new_feature_sort)
         if feature_color:

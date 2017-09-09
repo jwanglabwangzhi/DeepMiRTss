@@ -284,7 +284,7 @@ def main():
     rnn_fcell = LSTMcell(input=inputs_T, D_input=num_units, D_cell=num_units,param_rnn=param_rnn_f)       
     rnn_bcell = LSTMcell(input=inputs_T, D_input=num_units, D_cell=num_units,param_rnn=param_rnn_b) 
     rnn0 = RNN(cell=rnn_fcell, cell_b=rnn_bcell)
-    rnn0= tf.transpose(rnn0, perm=[1,0,2])
+    rnn0= tf.transpose(rnn0, perm=[1,2,0])
     rnn1 = tf.reshape(rnn0, [num_seq,75*num_units*2])
     w_dense=danq_model['/layer_6/param_0'][...]
     b_dense=danq_model['/layer_6/param_1'][...]
