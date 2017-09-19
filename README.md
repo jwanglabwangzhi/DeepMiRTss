@@ -12,7 +12,7 @@ Python packages dependencies:
 The pip install -r requirement.txt will try to install these packages automatically. However, please install them manually if, by any reason, the automatic installation fails.  
 External packages dependencies:  
 --bedtools  
-Install instructions:[http://bedtools.readthedocs.io/en/latest/](http://bedtools.readthedocs.io/en/latest/)  
+Install instructions:[http://bedtools.readthedocs.io/en/latest/](http://bedtools.readthedocs.io/en/latest/), make sure the bedtools has already exported to PATH.  
 ## INSTALLATION
 First, create a python virtualenv
 
