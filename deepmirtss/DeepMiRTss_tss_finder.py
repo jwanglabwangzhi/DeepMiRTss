@@ -7,8 +7,8 @@ import tss_finder as tsf
 
 help_info = """
 usage: DeepMiRTss_analysis [-h] [--help]
-                           [-p] [--polymerase_filename] The RNA polymerase signal file is a necessity for the calculation process.
-                           [-k] [--h3k4me3_filename] The h3k4m3 signal file can help to improve the accuracy of prediction .
+                           [-p] [--peak_filename] The signal peak file is a necessity for the calculation process.
+                           [-k] [--judgement_filename] The judgement signal file can help to improve the accuracy of prediction .
                            [-e] [--expressed_filename] miRNA expression file, we suggest providing no more than 20 miRNAs at a time which reduce the waiting time.
                            [-n] [--number_alternative_tss] The predicted number of alternative TSSs,and the default value is 3.
 
@@ -17,7 +17,7 @@ usage: DeepMiRTss_analysis [-h] [--help]
 def main():
     opts,args = getopt.getopt(
         sys.argv[1:],'-h-p:-k:-e:-n:',
-        ['help','polymerase_filename=','h3k4me3_filename=',
+        ['help','peak_filename=','judgement_filename=',
         'expressed_filename=','number_alternative_tss']
     )
     if not opts:
@@ -34,10 +34,10 @@ def main():
             if opt_name in ('-h', '--help'): 
                 print help_info
                 exit()
-            if opt_name in ('-p','--polymerase_filename'): 
+            if opt_name in ('-p','--peak_filename'): 
                 pol2_dir = opt_value 
             dic_dir['pol2'] = pol2_dir
-            if opt_name in ('-k','--h3k4me3_filename'): 
+            if opt_name in ('-k','--judgement_filename'): 
                 h3k4me3_dir = opt_value
             dic_dir['h3k4me3'] = h3k4me3_dir
             if opt_name in ('-e','--expressed_filename'):
