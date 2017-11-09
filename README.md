@@ -73,7 +73,7 @@ DeepMiRTss.tssfinder -p ./example/pol2.bed -k ./example/h3k4me3.bed -e ./example
 ```
 #### Results：
 You can get a table for TSSs with the basic information and score.
-![image1](https://github.com/jwanglabwangzhi/DeepMiRTss/file_for_readme/im1.png)
+![image1](https://github.com/jwanglabwangzhi/DeepMiRTss/tree/master/file_for_readme/im1.png)
 ### 2. DeepMiRTss.analysis  
 Make full use of DanQ model to calculate and analyze sequence features of region nearby TSSs.The DanQ model can refer to [``DanQ: a hybrid convolutional and recurrent neural network for predicting the function of DNA sequences''](https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkw226)
 #### Parameters:  
@@ -87,7 +87,7 @@ DeepMiRTss.analysis -d
 ```
 #### Results：
 You can get a table for TSSs with the basic information and score.
-![image2](https://github.com/jwanglabwangzhi/DeepMiRTss/file_for_readme/im2.png)
+![image2](https://github.com/jwanglabwangzhi/DeepMiRTss/tree/master/file_for_readme/im2.png)
 ### 3. DeepMiRTss.visulization  
 We use JavaScript and Ajax to dynamically visualize the features of miRNA alternative TSSs. So you can find the feature value and compare different alternative TSSs at the same time.  
 #### Parameters:
