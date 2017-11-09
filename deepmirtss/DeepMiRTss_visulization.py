@@ -1,13 +1,52 @@
 # -*- coding:utf-8 -*-
 
-import os
+import os, sys
+import getopt
+import re
 from BaseHTTPServer import HTTPServer
 from CGIHTTPServer import CGIHTTPRequestHandler
 
 import pandas as pd
 
+
+help_info = """
+usage: DeepMiRTss.visulization [-h] [--help]
+                           [-t] [--threhold] The threhold value you set to filer\
+the features for visulization. Please set it between (0,1). The default value is 0.5.
+                           
+"""
+
+# 必须判断是否存在'y.csv'文件
 def main():
-    # 必须判断是否存在'y.csv'文件
+    opts,args = getopt.getopt(
+        sys.argv[1:],'-h-t:',
+        ['help', 'threshold=']
+    )
+    thre_value = 0.5
+    for opt_name, opt_value in opts:
+        if opt_name in ('-h', '--help'): 
+            print help_info
+            exit()
+        if opt_name in ('-t','--threshold'): 
+            thre_value = float(opt_value)
+    if thre_value> 0 and thre_value < 1:
+        pass
+    else:
+        print 'You should set the threhold between (0,1).'
+        exit()
+
+
+    file_dir = os.getcwd()
+    cgi_bin_dir = file_dir + '/cgi-bin'
+    with open('%s/getmirna.py'%cgi_bin_dir,'r') as r:
+        file_read=r.read()
+    with open('%s/getmirna.py'%cgi_bin_dir,'w') as w:
+        line_9 = 'thre_value='+str(thre_value)
+        pattern = 'thre_value=0(\.\d*)'
+        file_read_change=re.sub(pattern, line_9, file_read)
+        w.write(file_read_change)
+
+
     file_exist_result = os.path.exists('./y.csv')
     if file_exist_result:
         pass
@@ -172,5 +211,5 @@ def main():
     print 'The visual system has been started. You can access \033[0;31m%s\033[0m on your browser'%'127.0.0.1:8080/visulization.html'
     httpd.serve_forever()
 
-if '__name__' =='__main__':
+if '__name__' == '__main__':
     main()

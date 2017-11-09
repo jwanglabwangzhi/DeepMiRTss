@@ -9,7 +9,6 @@ import numpy as np
 import h5py
 import pandas as pd
 
-
 def seq_translate_list(templet,seq):  
     final_list=[]
     templet=templet.strip()
@@ -23,29 +22,25 @@ def seq_translate_list(templet,seq):
                 final_list.append(0.0)
     return final_list
 
-
-
 def conv_forward_naive(x, w, b, conv_param):
-  out = None
-  N,C,H,W = x.shape
-  F,_,WW,HH = w.shape
-  S = conv_param['stride']
-  P = conv_param['pad']
-  Ho = 1 + (H + 2 * P - HH) / S
-  Wo = 1 + (W + 2 * P - WW) / S
-  x_pad = np.zeros((N,C,H+2*P,W+2*P))
-  x_pad[:,:,P:P+H,P:P+W]=x
-  out = np.zeros((N,F,Ho,Wo))
-  for f in xrange(F):
-    for i in xrange(Ho):
-      for j in xrange(Wo):
-        # N*C*HH*WW, C*HH*WW = N*C*HH*WW, sum -> N*1
-        out[:,f,i,j] = np.sum(x_pad[:, :, i*S : i*S+HH, j*S : j*S+WW] * w[f, :, :, :], axis=(1, 2, 3)) 
-    out[:, f, :, :]+=b[f]
-  cache = (x, w, b, conv_param)
-  return out, cache
-
-
+    out = None
+    N,C,H,W = x.shape
+    F,_,WW,HH = w.shape
+    S = conv_param['stride']
+    P = conv_param['pad']
+    Ho = 1 + (H + 2 * P - HH) / S
+    Wo = 1 + (W + 2 * P - WW) / S
+    x_pad = np.zeros((N,C,H+2*P,W+2*P))
+    x_pad[:,:,P:P+H,P:P+W]=x
+    out = np.zeros((N,F,Ho,Wo))
+    for f in xrange(F):
+        for i in xrange(Ho):
+          for j in xrange(Wo):
+            # N*C*HH*WW, C*HH*WW = N*C*HH*WW, sum -> N*1
+            out[:,f,i,j] = np.sum(x_pad[:, :, i*S : i*S+HH, j*S : j*S+WW] * w[f, :, :, :], axis=(1, 2, 3)) 
+        out[:, f, :, :]+=b[f]
+        cache = (x, w, b, conv_param)
+        return out, cache
 
 class LSTMcell(object):
     def __init__(self, input, D_input, D_cell,param_rnn, h_act=tf.tanh, init_h=None, init_c=None):
@@ -120,29 +115,54 @@ def RNN(cell, cell_b=None, merge='concat'):
         return hstates
 
 help_info = """
-usage: DeepMiRTss_analysis [-h] [--help]
+usage: DeepMiRTss.analysis [-h] [--help]
                            [-u] [--upstream] The distance value between tss and analysis region ,and the default value is 0.
+                           [-d] [--DanQ] Compute the sequence features with deep-learning model DanQ.
+                           [-j] [--jaspar] Compute the transcription factors binding site with jaspar database and TFBSTools.
+                           
 """
+
+
 def main():
     opts,args = getopt.getopt(
-        sys.argv[1:],'-h-u:',
-        ['help','upstream=']
+        sys.argv[1:],'-h-u:-d-j',
+        ['help', 'upstream=' ,'DanQ', 'jaspar']
     )
-
-
     u = 0
+    da = False
+    ja = False
     for opt_name, opt_value in opts:
         if opt_name in ('-h', '--help'): 
-            print help_info 
+            print help_info
             exit()
         if opt_name in ('-u','--upstream'): 
             u = opt_value
+        if opt_name in ('-d','--DanQ'):
+            da = True
+        if opt_name in ('-j','--jaspar'):
+            ja = True
+
+    analysis_method = 0
+    if da and ja:
+        print 'You can just choose one between DanQ and jaspar.'
+    else:
+        if da:
+            analysis_method = 1
+            print 'DanQ model is running,please wait...'
+        elif ja:
+            analysis_method = 2
+            print 'TFBSTools is running,please wait...'
+        else:
+            print 'You should at least choose one between DanQ and jaspar'
+            print help_info
+                 
 
     file_dir = os.getcwd()
     pre_load_dir = file_dir + '/pre_load'
+    exec_dir = file_dir + '/deepmirtss'
 
     file_exist_result = os.path.exists('./miRNA_alternative_tss.bed')
-    if not file_exist_result:
+    if not file_exist_result and analysisi_method !=0:
         print 'miRNA_alternative_tss.bed file must be in the current directory'
         exit()
 
@@ -158,6 +178,7 @@ def main():
         for mirna_tss_line in mirna_alternative_tss_list:
             if mirna_tss_line.split('\t')[3] == mirna:
                 dict_mirna.setdefault(mirna,[]).append(mirna_tss_line)
+
     sort_mirna = open('sort_mirna_withtss.txt','w')
     for mirna_key in dict_mirna.keys():
         if len(dict_mirna[mirna_key]) == 1:
@@ -174,7 +195,6 @@ def main():
                     if float(line.split('\t')[4]) == sort_mi_tss_score:
                         line_split = line.split('\t')
                         new_line = line_split[0] + '\t' + line_split[1] + '\t' + line_split[2] + '\t' + line_split[3]+'_'+str(sort_mi_tss_index+1) + '\t' + line_split[4] + '\t' + line_split[5]
-
                         sort_mirna.write(new_line)
     sort_mirna.close()              
 
@@ -207,103 +227,171 @@ def main():
         print 'genome file hg19.fa must be in the %s'%pre_load_dir
         exit()
 
-    os.system('bedtools getfasta -fi %s/hg19.fa \
-    -bed promoter_region.bed -s -fo promoter_region.bed.fasta'%pre_load_dir)
-    os.remove('promoter_region.bed')
-
     print 'The program is running. It may take a long time.\nPlease be patient...'
 
-    num_seq = 0
-    all_seq_list =[]
-    seq_file = open('promoter_region.bed.fasta')
-    seq_list = seq_file.readlines()
-    for seq_line in seq_list:
-        if seq_line[0] == '>':
-            pass
+
+    if analysis_method==0:
+        print 'paremeter error:'
+        print help_info
+        exit()
+    else:
+        if analysis_method == 1:
+            os.system('bedtools getfasta -fi %s/hg19.fa \
+            -bed promoter_region.bed -s -fo promoter_region.bed.fasta'%pre_load_dir)
+            os.remove('promoter_region.bed')
+            num_seq = 0
+            all_seq_list =[]
+            seq_file = open('promoter_region.bed.fasta')
+            seq_list = seq_file.readlines()
+            for seq_line in seq_list:
+                if seq_line[0] == '>':
+                    pass
+                else:
+                    num_seq += 1
+                    seq_list = seq_translate_list('atcg',seq_line)
+                    all_seq_list.append(seq_list)
+            all_seq_array=np.array(all_seq_list,'float32').reshape(num_seq,4,1,1000)
+            seq_file.close()
+            os.remove('promoter_region.bed.fasta')
+            x_shape = (num_seq, 4, 1, 1000) #n,c,w,h
+            w_shape = (320, 4, 1, 26) #f,c,ww,hh
+            x=all_seq_array
+            danq_model=h5py.File('%s/DanQ_bestmodel.hdf5'%pre_load_dir)
+            con_w=danq_model['/layer_0/param_0'][...]
+            con_b=danq_model['/layer_0/param_1'][...]
+            conv_param = {'stride': 1, 'pad': 0}
+            out, _ = conv_forward_naive(x, con_w, con_b, conv_param)
+            out_tensor = tf.convert_to_tensor(out,dtype=tf.float32)
+            sess=tf.Session()
+            sess.run(tf.global_variables_initializer())
+            sess.run(tf.local_variables_initializer())
+            relu_1=tf.nn.relu(out_tensor)
+            pool_1 = tf.nn.max_pool(relu_1, ksize=[1, 1, 1, 13], strides=[1, 1, 1, 13], padding='VALID')
+            pool_1 =tf.reshape(pool_1,[num_seq,320,75])
+            inputs_T= tf.transpose(pool_1, perm=[2,0,1])
+
+            W_i=danq_model['/layer_3/param_0'][...]
+            U_i=danq_model['/layer_3/param_1'][...]
+            b_i=danq_model['/layer_3/param_2'][...]
+
+            W_c=danq_model['/layer_3/param_3'][...]
+            U_c=danq_model['/layer_3/param_4'][...]
+            b_c=danq_model['/layer_3/param_5'][...]
+
+            W_f=danq_model['/layer_3/param_6'][...]
+            U_f=danq_model['/layer_3/param_7'][...]
+            b_f=danq_model['/layer_3/param_8'][...]
+
+            W_o=danq_model['/layer_3/param_9'][...]
+            U_o=danq_model['/layer_3/param_10'][...]
+            b_o=danq_model['/layer_3/param_11'][...]
+
+            back_W_i=danq_model['/layer_3/param_12'][...]
+            back_U_i=danq_model['/layer_3/param_13'][...]
+            back_b_i=danq_model['/layer_3/param_14'][...]
+
+            back_W_c=danq_model['/layer_3/param_15'][...]
+            back_U_c=danq_model['/layer_3/param_16'][...]
+            back_b_c=danq_model['/layer_3/param_17'][...]
+
+            back_W_f=danq_model['/layer_3/param_18'][...]
+            back_U_f=danq_model['/layer_3/param_19'][...]
+            back_b_f=danq_model['/layer_3/param_20'][...]
+
+            back_W_o=danq_model['/layer_3/param_21'][...]
+            back_U_o=danq_model['/layer_3/param_22'][...]
+            back_b_o=danq_model['/layer_3/param_23'][...]
+
+            param_rnn_f=[W_i,U_i,b_i,W_c,U_c,b_c,W_f,U_f,b_f,W_o,U_o,b_o]
+            param_rnn_b=[back_W_i,back_U_i,back_b_i,back_W_c,back_U_c,back_b_c,back_W_f,back_U_f,back_b_f,back_W_o,back_U_o,back_b_o]
+
+            num_units=320        
+            rnn_fcell = LSTMcell(input=inputs_T, D_input=num_units, D_cell=num_units,param_rnn=param_rnn_f)       
+            rnn_bcell = LSTMcell(input=inputs_T, D_input=num_units, D_cell=num_units,param_rnn=param_rnn_b) 
+            rnn0 = RNN(cell=rnn_fcell, cell_b=rnn_bcell)
+            rnn0= tf.transpose(rnn0, perm=[1,2,0])
+            rnn1 = tf.reshape(rnn0, [num_seq,75*num_units*2])
+            w_dense=danq_model['/layer_6/param_0'][...]
+            b_dense=danq_model['/layer_6/param_1'][...]
+            relu_2=tf.nn.relu(tf.matmul(rnn1,w_dense)+b_dense)
+            w_dense_1=danq_model['/layer_8/param_0'][...]
+            b_dense_1=danq_model['/layer_8/param_1'][...]
+            sigmoid_1=tf.nn.sigmoid(tf.matmul(relu_2,w_dense_1)+b_dense_1)
+            y = sess.run(sigmoid_1)
+
+            feature_list = []
+            for feature_line in open('%s/DanQ_features.txt'%pre_load_dir):
+                feature_split = feature_line.split('\t')
+                feature = feature_split[1] + ':' + feature_split[2]
+                feature_list.append(feature)
+            y_array = np.array(y,'float32')
+            y_df = pd.DataFrame(y_array, index = mirna_list, columns = feature_list) 
+            y_df.to_csv('y.csv')           
         else:
-            num_seq += 1
-            seq_list = seq_translate_list('atcg',seq_line)
-            all_seq_list.append(seq_list)
-    all_seq_array=np.array(all_seq_list,'float32').reshape(num_seq,4,1,1000)
-    seq_file.close()
-    os.remove('promoter_region.bed.fasta')
+            os.system('bedtools getfasta -fi %s/hg19.fa \
+            -bed promoter_region.bed -s -name -fo promoter_region.bed.fasta'%pre_load_dir)
+            os.remove('promoter_region.bed')
 
-    x_shape = (num_seq, 4, 1, 1000) #n,c,w,h
-    w_shape = (320, 4, 1, 26) #f,c,ww,hh
-    x=all_seq_array
-    danq_model=h5py.File('%s/DanQ_bestmodel.hdf5'%pre_load_dir)
-    con_w=danq_model['/layer_0/param_0'][...]
-    con_b=danq_model['/layer_0/param_1'][...]
-    conv_param = {'stride': 1, 'pad': 0}
-    out, _ = conv_forward_naive(x, con_w, con_b, conv_param)
-    out_tensor = tf.convert_to_tensor(out,dtype=tf.float32)
-    sess=tf.Session()
-    sess.run(tf.global_variables_initializer())
-    sess.run(tf.local_variables_initializer())
-    relu_1=tf.nn.relu(out_tensor)
-    pool_1 = tf.nn.max_pool(relu_1, ksize=[1, 1, 1, 13], strides=[1, 1, 1, 13], padding='VALID')
-    pool_1 =tf.reshape(pool_1,[num_seq,320,75])
-    inputs_T= tf.transpose(pool_1, perm=[2,0,1])
+            mirna_set=set()
+            os.system("Rscript %s/jaspar_find_tf.R promoter_region.bed.fasta"%exec_dir)
+            os.remove('promoter_region.bed.fasta')
+            dict_jaspar_tf = {}
+            # get a dict for all sequence with tfs and their scores
+            for jaspar_line in open("tf_jaspar.txt"):
+                split_jaspar_line = jaspar_line.split(",")
+                if split_jaspar_line[0] =='""':
+                    pass
+                else:
+                    mirna_name = split_jaspar_line[1].strip('"')
+                    mirna_set.add(mirna_name)
+                    tf_name = split_jaspar_line[-1].lstrip('"TF=').split(';')[0]
+                    tf_score = float(split_jaspar_line[6])
+                    if mirna_name not in dict_jaspar_tf:
+                        dict_jaspar_tf[mirna_name] = {}
+                        dict_jaspar_tf[mirna_name][tf_name]=tf_score
+                    else:
+                        if tf_name not in dict_jaspar_tf[mirna_name]:
+                            dict_jaspar_tf[mirna_name][tf_name]=tf_score
+                        else:
+                            dict_jaspar_tf[mirna_name][tf_name]+=tf_score  
 
-    W_i=danq_model['/layer_3/param_0'][...]
-    U_i=danq_model['/layer_3/param_1'][...]
-    b_i=danq_model['/layer_3/param_2'][...]
+            # delete tfs which score less than 0
+            for mirna_name in dict_jaspar_tf.keys():
+                for tf_name in dict_jaspar_tf[mirna_name].keys():
+                    if dict_jaspar_tf[mirna_name][tf_name]  < 0:
+                        dict_jaspar_tf[mirna_name].pop(tf_name) 
 
-    W_c=danq_model['/layer_3/param_3'][...]
-    U_c=danq_model['/layer_3/param_4'][...]
-    b_c=danq_model['/layer_3/param_5'][...]
+            # normalization with z-score
+            for mirna_name in dict_jaspar_tf.keys():
+                max_value = max(dict_jaspar_tf[mirna_name].values())
+                min_value = min(dict_jaspar_tf[mirna_name].values())
+                d_value = max_value-min_value
+                for tf_name in dict_jaspar_tf[mirna_name].keys():
+                    dict_jaspar_tf[mirna_name][tf_name] = (dict_jaspar_tf[mirna_name]\
+            [tf_name]-min_value)/d_value
 
-    W_f=danq_model['/layer_3/param_6'][...]
-    U_f=danq_model['/layer_3/param_7'][...]
-    b_f=danq_model['/layer_3/param_8'][...]
+            feature_list = []
 
-    W_o=danq_model['/layer_3/param_9'][...]
-    U_o=danq_model['/layer_3/param_10'][...]
-    b_o=danq_model['/layer_3/param_11'][...]
+            for feature_line in open('%s/jaspar_features.txt'%pre_load_dir):
+                feature = feature_line.rstrip('\n')
+                feature_list.append(feature)
 
-    back_W_i=danq_model['/layer_3/param_12'][...]
-    back_U_i=danq_model['/layer_3/param_13'][...]
-    back_b_i=danq_model['/layer_3/param_14'][...]
+            # give each miRNA a score, if the dict has no tf information just give it 0.
+            y_array = np.zeros((len(mirna_set),len(feature_list)))
 
-    back_W_c=danq_model['/layer_3/param_15'][...]
-    back_U_c=danq_model['/layer_3/param_16'][...]
-    back_b_c=danq_model['/layer_3/param_17'][...]
+            y_df = pd.DataFrame(y_array, index = mirna_set, columns = feature_list) 
+            #print y_df
+            for mirna_name in dict_jaspar_tf.keys():
+                for tf_name in dict_jaspar_tf[mirna_name].keys():
+                    try:
+                        y_df.loc[mirna_name,tf_name]
+                        y_df.loc[mirna_name,tf_name] = dict_jaspar_tf[mirna_name][tf_name]
+                    except:
+                        pass
+            os.remove('tf_jaspar.txt')
+            y_df.to_csv('y.csv')    
 
-    back_W_f=danq_model['/layer_3/param_18'][...]
-    back_U_f=danq_model['/layer_3/param_19'][...]
-    back_b_f=danq_model['/layer_3/param_20'][...]
-
-    back_W_o=danq_model['/layer_3/param_21'][...]
-    back_U_o=danq_model['/layer_3/param_22'][...]
-    back_b_o=danq_model['/layer_3/param_23'][...]
-
-    param_rnn_f=[W_i,U_i,b_i,W_c,U_c,b_c,W_f,U_f,b_f,W_o,U_o,b_o]
-    param_rnn_b=[back_W_i,back_U_i,back_b_i,back_W_c,back_U_c,back_b_c,back_W_f,back_U_f,back_b_f,back_W_o,back_U_o,back_b_o]
-
-    num_units=320        
-    rnn_fcell = LSTMcell(input=inputs_T, D_input=num_units, D_cell=num_units,param_rnn=param_rnn_f)       
-    rnn_bcell = LSTMcell(input=inputs_T, D_input=num_units, D_cell=num_units,param_rnn=param_rnn_b) 
-    rnn0 = RNN(cell=rnn_fcell, cell_b=rnn_bcell)
-    rnn0= tf.transpose(rnn0, perm=[1,2,0])
-    rnn1 = tf.reshape(rnn0, [num_seq,75*num_units*2])
-    w_dense=danq_model['/layer_6/param_0'][...]
-    b_dense=danq_model['/layer_6/param_1'][...]
-    relu_2=tf.nn.relu(tf.matmul(rnn1,w_dense)+b_dense)
-    w_dense_1=danq_model['/layer_8/param_0'][...]
-    b_dense_1=danq_model['/layer_8/param_1'][...]
-    sigmoid_1=tf.nn.sigmoid(tf.matmul(relu_2,w_dense_1)+b_dense_1)
-    y = sess.run(sigmoid_1)
-
-    feature_list = []
-    for feature_line in open('%s/features.txt'%pre_load_dir):
-        feature_split = feature_line.split('\t')
-        feature = feature_split[1] + ':' + feature_split[2]
-        feature_list.append(feature)
-    y_array = np.array(y,'float32')
-    y_df = pd.DataFrame(y_array, index = mirna_list, columns = feature_list) 
-    y_df.to_csv('y.csv')
     print 'Finish, you can find results in \
 y.csv in %s'%file_dir
-
 if __name__ == '__main__':
     main()
