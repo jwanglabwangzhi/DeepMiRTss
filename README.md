@@ -12,27 +12,33 @@ Python packages dependencies:
 The pip install -r requirement.txt will try to install these packages automatically. However, please install them manually if, by any reason, the automatic installation fails.  
 External packages dependencies:  
 --bedtools  
-Install instructions:[http://bedtools.readthedocs.io/en/latest/](http://bedtools.readthedocs.io/en/latest/), make sure the bedtools has already exported to PATH.  
+Install instructions:[http://bedtools.readthedocs.io/en/latest/](http://bedtools.readthedocs.io/en/latest/). Make sure the bedtools has already exported to PATH.   
+---R and R packages:   
+DeepMiRTss.analysis module can use R package TFBSTools to find tf features with -j parameter. If you don't use the parameter, you don't need to install those packages.   
+--R:   
+Install instructions:[https://www.r-project.org/](https://www.r-project.org/).  
+--TFBSTools:   
+Install instructions:[http://www.bioconductor.org/packages/release/bioc/html/TFBSTools.html](http://www.bioconductor.org/packages/release/bioc/html/TFBSTools.html)  
+--JARSPAR2018:  
+Install instructions:[http://www.bioconductor.org/packages/release/bioc/html/JASPAR2018.html](http://www.bioconductor.org/packages/release/bioc/html/JASPAR2018.html)
+
+
 ## INSTALLATION
 First, create a python virtual environment.
-
 ```
 virtualenv DeepMiRTss_env
 ```
 Second, active the virtualenv and cd into it.
-
 ```
 source ./DeepMiRTss_env/bin/activate
 cd ./DeepMiRTss_env
 ```
 Third, download the software package.  
-
 ```
 git clone https://github.com/jwanglabwangzhi/DeepMiRTss
 
 ```
 Fouth, cd to the package directory,run requirements and setup.py script to install.
-
 ```
 cd ./DeepMiRTss
 pip install -r requirements.txt
@@ -62,19 +68,12 @@ We suggest providing no more than 50 miRNAs at a time which reduces the waiting 
 The predicted number of alternative TSSs, and the default value is 3, you can set any positive number to obtain multiple results for the same miRNA.
 #### Examples：
 ```
-# If you only have a single signal file, you can run the programme like this in example to find TSSs.
-DeepMiRTss.tssfinder -p ./example/pol2.bed 
-
-# When you have two signal files, you can use one of them as judgement. The judgement file can help improve the accuracy like the follow example.
-DeepMiRTss.tssfinder -p ./example/pol2.bed -k ./example/h3k4me3.bed
-
 # When you have two signal files and express file, code like this help you find TSSs based on expression file.
 DeepMiRTss.tssfinder -p ./example/pol2.bed -k ./example/h3k4me3.bed -e ./example/express.txt
-
-# You can identify only one TSS for a miRNA, or identify multiple TSSs, as long as you change the -n parameter.
-DeepMiRTss.tssfinder -p ./example/pol2.bed -n 1
-DeepMiRTss.tssfinder -p ./example/pol2.bed -n 5
 ```
+#### Results：
+You can get a table for TSSs with the basic information and score.
+![image1](https://github.com/jwanglabwangzhi/DeepMiRTss/file_for_readme/im1.png)
 ### 2. DeepMiRTss.analysis  
 Make full use of DanQ model to calculate and analyze sequence features of region nearby TSSs.The DanQ model can refer to [``DanQ: a hybrid convolutional and recurrent neural network for predicting the function of DNA sequences''](https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkw226)
 #### Parameters:  
@@ -84,17 +83,21 @@ The distance value between TSS and analysis region,and the default value is 0. Y
 #### Examples：
 ```
 # If you analysis TSSs region (TSS-500,  TSS+500), no parameter needs to be set.
-DeepMiRTss.analysis
-# If the promoter region(TSS-1000, TSS) is you need, set -u as 500.
-DeepMiRTss.analysis -u 500
+DeepMiRTss.analysis -d
 ```
+#### Results：
+You can get a table for TSSs with the basic information and score.
+![image2](https://github.com/jwanglabwangzhi/DeepMiRTss/file_for_readme/im2.png)
 ### 3. DeepMiRTss.visulization  
 We use JavaScript and Ajax to dynamically visualize the features of miRNA alternative TSSs. So you can find the feature value and compare different alternative TSSs at the same time.  
-#### No parameter here
+#### Parameters:
+<-t --threhold> [The threhold value]
 #### Examples：
 ```
 DeepMiRTss.visulization
 ```
+#### Results：
+You can get a web page to visulize the results like the page [here](http://mcube.nju.edu.cn/jwang/lab/soft/deepmirtss_example/visulization.html).
 
 ## FAQ  
 1 ChIP-seq siganl data including pol2, DHS, and the transcription related histone such as h3k4me3, h3k4me2, etc.  
