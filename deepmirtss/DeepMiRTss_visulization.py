@@ -10,9 +10,9 @@ import pandas as pd
 
 
 help_info = """
-usage: DeepMiRTss.visulization [-h] [--help]
+usage: DeepMiRTss.visualization [-h] [--help]
                            [-t] [--threhold] The threhold value you set to filer\
-the features for visulization. Please set it between (0,1). The default value is 0.5.
+the features for visualization. Please set it between (0,1). The default value is 0.5.
                            
 """
 
