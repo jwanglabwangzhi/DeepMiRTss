@@ -106,7 +106,7 @@ You can get a web page to visulize the results like the page [here](http://mcube
 4 Of course, you can use any peak-calling software, we recommend using MACS2 to call peaks for ChIP-seq data and peak-calling for 5' end of cap-protected RNAs data with HOMER.  
 5 If you don't provide -e parameter as a express file in 'DeepMiRTss.tssfinder' command, the program will compute all miRNA which might be last for a long time. So we suggest providing no more than 20 miRNAs at a time which reduces the waiting time.  
 6 The command 'DeepMiRTss.analysis' must base on the result of command 'DeepMiRTss.tssfinder' which generates a 'miRNA_alternative_tss.bed' file.  
-7 The command 'DeepMiRTss.visulization' must base on the result of command 'DeepMiRTss.analysis' which generates a 'y.csv' file.  
+7 The command 'DeepMiRTss.visualization' must base on the result of command 'DeepMiRTss.analysis' which generates a 'y.csv' file.  
 
 
 ## CREDITS
