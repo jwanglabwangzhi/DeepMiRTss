@@ -19,7 +19,7 @@ def main():
             'console_scripts':[           
                 'DeepMiRTss.tssfinder=deepmirtss.DeepMiRTss_tss_finder:main',
                 'DeepMiRTss.analysis=deepmirtss.DeepMiRTss_analysis:main',
-                'DeepMiRTss.visulization=deepmirtss.DeepMiRTss_visulization:main'
+                'DeepMiRTss.visualization=deepmirtss.DeepMiRTss_visulization:main'
 ],          
 }
 )
