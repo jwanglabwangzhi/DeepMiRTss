@@ -7,6 +7,11 @@ import pandas as pd
 
 form=cgi.FieldStorage()
 name=form.getvalue('mirna_name')
+thre_value=0.7
+thre_add_value = (1.0 - thre_value)/3.0
+thre_low = thre_value
+thre_middle = thre_low + thre_add_value
+thre_high = thre_middle + thre_add_value
 
 print 'Content-Type: text/html\n\n'
 y_df = pd.read_csv('./y.csv', index_col = 0)
@@ -18,7 +23,7 @@ for mirna_sort in mirna_sort_list:
     if mirna_sort[:-2] == name:
         mir_sort_list.append(mirna_sort)
         for mirna_sort_value_index in zip(y_df.ix[mirna_sort], y_df.ix[mirna_sort].index):
-            if mirna_sort_value_index[0] > 0.5:                     
+            if mirna_sort_value_index[0] > thre_low:                     
                 feature_set.add(mirna_sort_value_index[1])        
 feature_sort_list = sorted([x for x in feature_set])        
 
@@ -166,19 +171,19 @@ for mir_sort in mir_sort_list:
     for feature_sort in feature_sort_list:
         new_feature_sort = feature_sort + mir_sort[-2:]
         feature_color = ''
-        if 0.5 < y_df.ix[mir_sort, feature_sort] <= 0.7:     
+        if thre_low < y_df.ix[mir_sort, feature_sort] <= thre_middle:     
             feature_color ='#999'
             mir_feature_dict.setdefault(mir_sort,[]).append(new_feature_sort)
-        elif 0.7 < y_df.ix[mir_sort, feature_sort] <= 0.9:      
+        elif thre_middle < y_df.ix[mir_sort, feature_sort] <= thre_high:      
             feature_color ='#099'
             mir_feature_dict.setdefault(mir_sort,[]).append(new_feature_sort)
-        elif 0.9 < y_df.ix[mir_sort, feature_sort]:           
+        elif thre_high < y_df.ix[mir_sort, feature_sort]:          
             feature_color ='#009'
             mir_feature_dict.setdefault(mir_sort,[]).append(new_feature_sort)
         if feature_color:
             wasd4 += "    {name:'%s',category:1,itemStyle:{normal: {color: '%s',},emphasis:{color: '#000'}}},"%(new_feature_sort, feature_color)
         else:
-            pass                
+            pass   
 wasd4 = wasd4.strip(',')
 
 wasd5 =""" ],     
@@ -192,7 +197,6 @@ for mir_sort in mir_feature_dict.keys():
 wasd7 ="""                                                            ]
             }]
             };
-
     // 使用刚指定的配置项和数据显示图表。
     myChart2.setOption(option);       
     </script>"""
