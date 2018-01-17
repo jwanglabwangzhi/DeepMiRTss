@@ -6,7 +6,7 @@ import getopt
 import tss_finder as tsf
 
 help_info = """
-usage: StatAnalysis [-h] [--help]
+usage: TssFinder [-h] [--help]
                            [-p] [--peak_filename] The signal peak file is a necessity for the calculation process.
                            [-k] [--judgement_filename] The judgement signal file can help to improve the accuracy of prediction .
                            [-e] [--expressed_filename] miRNA expression file, we suggest providing no more than 20 miRNAs at a time which reduce the waiting time.
