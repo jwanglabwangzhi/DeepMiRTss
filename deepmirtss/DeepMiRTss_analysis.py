@@ -115,7 +115,7 @@ def RNN(cell, cell_b=None, merge='concat'):
         return hstates
 
 help_info = """
-usage: DeepMiRTss.analysis [-h] [--help]
+usage: StatAnalysis [-h] [--help]
                            [-u] [--upstream] The distance value between tss and analysis region ,and the default value is 0.
                            [-d] [--DanQ] Compute the sequence features with deep-learning model DanQ.
                            [-j] [--jaspar] Compute the transcription factors binding site with jaspar database and TFBSTools.
