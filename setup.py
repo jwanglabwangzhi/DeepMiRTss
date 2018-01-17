@@ -17,9 +17,9 @@ def main():
           include_package_data=True,
           entry_points = {
             'console_scripts':[           
-                'DeepMiRTss.tssfinder=deepmirtss.DeepMiRTss_tss_finder:main',
-                'DeepMiRTss.analysis=deepmirtss.DeepMiRTss_analysis:main',
-                'DeepMiRTss.visualization=deepmirtss.DeepMiRTss_visulization:main'
+                'TssFinder=deepmirtss.DeepMiRTss_tss_finder:main',
+                'StatAnalysis=deepmirtss.DeepMiRTss_analysis:main',
+                'RegView=deepmirtss.DeepMiRTss_visulization:main'
 ],          
 }
 )
