@@ -80,6 +80,8 @@ Make full use of DanQ model to calculate and analyze sequence features of region
 <-h --help>  
 <-u --upstream> [The distance value]  
 The distance value between TSS and analysis region,and the default value is 0. You can choose the TSS region (TSS-500, TSS+500) as the analysis region which is the default or choose other region as you like.  
+<-d --DanQ> The parameter helps the module predict binding TFs by DanQ model.
+<-j --Jarspar> The parameter helps the module find bnding TFs by Jarspar Database TFBSTools. Please make sure install Jaspar correctly.
 #### Examples：
 ```
 # If you analysis TSSs region (TSS-500,  TSS+500), no parameter needs to be set.
