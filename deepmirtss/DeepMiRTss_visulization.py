@@ -11,8 +11,7 @@ import pandas as pd
 
 help_info = """
 usage: RegView [-h] [--help]
-                           [-t] [--threhold] The threhold value you set to filer\
-the features for visualization. Please set it between (0,1). The default value is 0.5.
+                           [-t] [--top] The num of TFS to display, the default is 10.
                            
 """
 
@@ -20,19 +19,19 @@ the features for visualization. Please set it between (0,1). The default value i
 def main():
     opts,args = getopt.getopt(
         sys.argv[1:],'-h-t:',
-        ['help', 'threshold=']
+        ['help', 'top=']
     )
-    thre_value = 0.5
+    top_num = 0.5
     for opt_name, opt_value in opts:
         if opt_name in ('-h', '--help'): 
             print help_info
             exit()
-        if opt_name in ('-t','--threshold'): 
-            thre_value = float(opt_value)
-    if thre_value> 0 and thre_value < 1:
+        if opt_name in ('-t','--top'): 
+            top_num = int(opt_value)
+    if top_num> 0:
         pass
     else:
-        print 'You should set the threhold between (0,1).'
+        print 'You should set the top number as a positive number.'
         exit()
 
 
@@ -41,8 +40,8 @@ def main():
     with open('%s/getmirna.py'%cgi_bin_dir,'r') as r:
         file_read=r.read()
     with open('%s/getmirna.py'%cgi_bin_dir,'w') as w:
-        line_9 = 'thre_value='+str(thre_value)
-        pattern = 'thre_value=0(\.\d*)'
+        line_9 = 'show_num='+str(top_num)
+        pattern = 'show_num=(\d*)'
         file_read_change=re.sub(pattern, line_9, file_read)
         w.write(file_read_change)
 
@@ -72,10 +71,8 @@ def main():
     <meta charset="utf-8"><title>miRNA visulization system for TSS regulatory region</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="css/home.css">
-
     <script src="js/echarts.min.js"></script>
     </head>
-
     <script language="javascript">
     function executeScript(html)
         {
@@ -99,7 +96,6 @@ def main():
                                         }
                                     }
                                 }
-
     function postToPic()
     {   
         //获取接受返回信息层   
@@ -143,7 +139,6 @@ def main():
             window.alert("不能创建XMLHttpRequest对象实例.");
             return false;
         }
-
         //通过Post方式打开连接
         ajax.open("POST", url, true);
         //定义传输的文件HTTP头信息
@@ -164,7 +159,6 @@ def main():
         } 
     }
     </script>
-
     <body>
         <div class="section-01">
             <h3>Welcome to visulization system<br>You can choose one miRNA in the left form and visualize the characteristics of its TSS regulatory region</h3>
@@ -197,7 +191,6 @@ def main():
             </div>
         </div>
     </body>
-
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <!--[if lte IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/placeholders/3.0.2/placeholders.min.js"></script><![endif]-->
     </body>
