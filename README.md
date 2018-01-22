@@ -91,10 +91,10 @@ You can get a table for TSSs with the basic information and score.
 ### 3. RegView  
 We use JavaScript and Ajax to dynamically visualize the features of miRNA alternative TSSs. So you can find the feature value and compare different alternative TSSs at the same time.  
 #### Parameters:
-<-t --threhold> [The threhold value]
+<-t --top> [The number of TFs rank according to value]
 #### Examples：
 ```
-RegView -t 0.5
+RegView -t 10
 ```
 #### Results：
 You can get a web page to visulize the results like the page [here](http://mcube.nju.edu.cn/jwang/lab/soft/deepmirtss_example/visulization.html).
