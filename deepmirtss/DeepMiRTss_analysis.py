@@ -39,8 +39,8 @@ def conv_forward_naive(x, w, b, conv_param):
             # N*C*HH*WW, C*HH*WW = N*C*HH*WW, sum -> N*1
             out[:,f,i,j] = np.sum(x_pad[:, :, i*S : i*S+HH, j*S : j*S+WW] * w[f, :, :, :], axis=(1, 2, 3)) 
         out[:, f, :, :]+=b[f]
-        cache = (x, w, b, conv_param)
-        return out, cache
+    cache = (x, w, b, conv_param)
+    return out, cache
 
 class LSTMcell(object):
     def __init__(self, input, D_input, D_cell,param_rnn, h_act=tf.tanh, init_h=None, init_c=None):
