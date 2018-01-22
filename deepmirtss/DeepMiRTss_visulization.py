@@ -21,7 +21,7 @@ def main():
         sys.argv[1:],'-h-t:',
         ['help', 'top=']
     )
-    top_num = 0.5
+    top_num = 10
     for opt_name, opt_value in opts:
         if opt_name in ('-h', '--help'): 
             print help_info
