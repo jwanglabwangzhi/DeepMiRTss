@@ -29,42 +29,76 @@ if len(mir_sort_list)>3:
     mir_sort_list=mir_sort_list[:3]
 
 
-for mirna_index,mirna_name in enumerate(mir_sort_list):
-    tf_dic_tmp = {}
-    num = 0
-    for tf_name_score in zip(y_df.ix[mirna_name].index,y_df.ix[mirna_name]):
-        num +=1
-        tf_name=tf_name_score[0].split(':')[1].split('.')[0]
-        tf_score=tf_name_score[1]
-        if tf_name in tf_dic_tmp.keys():
-            tf_dic_tmp[tf_name].append(tf_score)
-        else:
-            tf_dic_tmp[tf_name]=[]
-            tf_dic_tmp[tf_name].append(tf_score)
-        if num >=690:
-            break
-    tf_dic_tmp_sort ={} 
-    for tf_key in tf_dic_tmp.keys():
-        tf_dic_tmp_sort[tf_key] = float(sum(tf_dic_tmp[tf_key])) / len(tf_dic_tmp[tf_key])
-    mirna_tf_dict[mirna_name]=tf_dic_tmp_sort
+if len(feature_list)==919:
+    for mirna_index,mirna_name in enumerate(mir_sort_list):
+        tf_dic_tmp = {}
+        num = 0
+        for tf_name_score in zip(y_df.ix[mirna_name].index,y_df.ix[mirna_name]):
+            num +=1
+            tf_name=tf_name_score[0].split(':')[1].split('.')[0]
+            tf_score=tf_name_score[1]
+            if tf_name in tf_dic_tmp.keys():
+                tf_dic_tmp[tf_name].append(tf_score)
+            else:
+                tf_dic_tmp[tf_name]=[]
+                tf_dic_tmp[tf_name].append(tf_score)
+            if num >=690:
+                break
+        tf_dic_tmp_sort ={} 
+        for tf_key in tf_dic_tmp.keys():
+            tf_dic_tmp_sort[tf_key] = float(sum(tf_dic_tmp[tf_key])) / len(tf_dic_tmp[tf_key])
+        mirna_tf_dict[mirna_name]=tf_dic_tmp_sort
 
-all_0=[0 for x in range(170)] 
-num_data_array=all_0
-for mirna_name in mir_sort_list:
-    new_add_array=mirna_tf_dict[mirna_name].values()
-    num_data_array=[x+y for x,y in zip(num_data_array,new_add_array)]
+    all_0=[0 for x in range(170)] 
+    num_data_array=all_0
+    for mirna_name in mir_sort_list:
+        new_add_array=mirna_tf_dict[mirna_name].values()
+        num_data_array=[x+y for x,y in zip(num_data_array,new_add_array)]
 
-dict_value_index={}
-value_sort_list=[]
-value_index=0
-for value_data in num_data_array:    
-    dict_value_index[value_data]=value_index
-    value_index+=1
-for value_key in sorted(dict_value_index.keys(),reverse=True):
-    value_sort_list.append(dict_value_index[value_key]) 
+    dict_value_index={}
+    value_sort_list=[]
+    value_index=0
+    for value_data in num_data_array:    
+        dict_value_index[value_data]=value_index
+        value_index+=1
+    for value_key in sorted(dict_value_index.keys(),reverse=True):
+        value_sort_list.append(dict_value_index[value_key]) 
 
-tf_name_show_list=[mirna_tf_dict[name+'_1'].keys()[x] for x in value_sort_list][:show_num]
-  
+    tf_name_show_list=[mirna_tf_dict[name+'_1'].keys()[x] for x in value_sort_list][:show_num]
+else:
+    for mirna_index,mirna_name in enumerate(mir_sort_list):
+        tf_dic_tmp = {}
+        num = 0
+        for tf_name_score in zip(y_df.ix[mirna_name].index,y_df.ix[mirna_name]):
+            num+=1
+            tf_name=tf_name_score[0]
+            tf_score=tf_name_score[1]
+            if tf_name in tf_dic_tmp.keys():
+                tf_dic_tmp[tf_name].append(tf_score)
+            else:
+                tf_dic_tmp[tf_name]=[]
+                tf_dic_tmp[tf_name].append(tf_score)
+        tf_dic_tmp_sort ={} 
+        for tf_key in tf_dic_tmp.keys():
+            tf_dic_tmp_sort[tf_key] = float(sum(tf_dic_tmp[tf_key])) / len(tf_dic_tmp[tf_key])
+        mirna_tf_dict[mirna_name]=tf_dic_tmp_sort
+
+    all_0=[0 for x in range(len(mirna_tf_dict[name+'_1'].keys()))]
+    num_data_array=all_0
+    for mirna_name in mir_sort_list:
+        new_add_array=mirna_tf_dict[mirna_name].values()
+        num_data_array=[x+y for x,y in zip(num_data_array,new_add_array)]
+
+    dict_value_index={}
+    value_sort_list=[]
+    value_index=0
+    for value_data in num_data_array:    
+        dict_value_index[value_data]=value_index
+        value_index+=1
+    for value_key in sorted(dict_value_index.keys(),reverse=True):
+        value_sort_list.append(dict_value_index[value_key]) 
+
+    tf_name_show_list=[mirna_tf_dict[name+'_1'].keys()[x] for x in value_sort_list][:show_num]
 
 hjkl1 = '''
 <!-- 为ECharts准备一个具备大小（宽高）的Dom --> 
