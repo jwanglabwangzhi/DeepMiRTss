@@ -84,7 +84,7 @@ The distance value between TSS and analysis region,and the default value is 0. Y
 <-j --Jarspar> The parameter helps the module find bnding TFs by Jarspar Database TFBSTools. Please make sure install Jaspar TFBSTools correctly.  
 #### Examples：
 ```
-# If you analysis TSSs region (TSS-500,  TSS+500), no parameter needs to be set.
+# If you analysis TSSs region (TSS-500,  TSS+500) with DanQ model, you can run like follow.
 StatAnalysis -d
 ```
 #### Results：
