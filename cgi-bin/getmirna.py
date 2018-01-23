@@ -232,7 +232,10 @@ wasd3=				"""
                 // 圆圈内的文字
                 label: {
                     normal: {
-                        show: true
+                        show: true,
+                        textStyle: {
+                            color:'#FFD700'
+                        }
                     }
                 },
                 force: {
@@ -240,18 +243,23 @@ wasd3=				"""
                     layoutAnimation:false
                 },
                 data: ["""
+
+color_list=['#C33532','#304454','#629FA9']
+color_list=color_list[:len(mir_sort_list)]
+if len(mir_sort_list)==3:
+	tf_color='#D48166'
+else:
+	tf_color=color_list[len(mir_sort_list)-1]
                 
 wasd4 = ""
 for tf_name in tf_name_show_list:
-        wasd4 += "{name:'%s',value:1,itemStyle: {normal: {color: '#7388AC', label: {position: 'bottom',textStyle: {color: '#7388AC'}}}},},"%tf_name
+        wasd4 += "{name:'%s',value:1,itemStyle: {normal: {color: '%s', label: {position: 'bottom',textStyle: {color: '%s'}}}},},"%(tf_name,tf_color,tf_color)
                          
 wasd5 = ""
 tf_mir_dict = {}
-
-color_list=['#EA7E52','#74A274','#EFDD79']
 for index,mir_name in enumerate(mir_sort_list):
     feature_color = color_list[index] 
-    wasd5 += "    {name:'%s',category:1,itemStyle:{normal: {color: '%s',},emphasis:{color: '#000'}}},"%(mir_name, feature_color)
+    wasd5 += "    {name:'%s',category:'%s',itemStyle:{normal: {color: '%s',},emphasis:{color: '#000'}}},"%(mir_name, mir_name, feature_color)
 
 wasd5 = wasd5.strip(',')
 
@@ -272,8 +280,7 @@ for tf_name in tf_name_show_list:
         wasd7 += "   {source: '%s',target: '%s',value:'',lineStyle:{normal:{color:'%s'}}  },"%(tf_name, mir_name,line_color)
 
 for tf_ppi_con in tf_ppi_con_list:
-    wasd7 += "   {source: '%s',target: '%s',value:'',lineStyle:{normal:{color:'#7388AC'}}  },"%(tf_ppi_con[0],tf_ppi_con[1])
-
+    wasd7 += "   {source: '%s',target: '%s',value:'',lineStyle:{normal:{color:'%s'}}  },"%(tf_ppi_con[0],tf_ppi_con[1],tf_color)
 wasd8 ="""                                                            ]
             }]
             };
